@@ -34,6 +34,9 @@ jobs:
           echo "${{ secrets.CLIENT_KEY }}" | base64 -d > $HOME/.minikube/profiles/minikube/client.key
           echo "${{ secrets.CA_CRT }}" | base64 -d > $HOME/.minikube/ca.crt
 
+          # Исправление путей в kubeconfig
+          sed -i "s|/home/vlad|$HOME|g" $HOME/.kube/config
+
           # Проверка сертификатов
           ls -l $HOME/.minikube/profiles/minikube
           ls -l $HOME/.minikube
