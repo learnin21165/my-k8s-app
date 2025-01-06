@@ -36,24 +36,14 @@ jobs:
       - name: Set up Kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
 
       - name: Set up Minikube certificates
         run: |
           mkdir -p $HOME/.minikube/profiles/minikube
-          echo "${{ secrets.CLIENT_CRT }}" > $HOME/.minikube/profiles/minikube/client.crt
-          echo "${{ secrets.CLIENT_KEY }}" > $HOME/.minikube/profiles/minikube/client.key
-          echo "${{ secrets.CA_CRT }}" > $HOME/.minikube/ca.crt
-
-          # Проверка файлов
-          ls -l $HOME/.minikube/profiles/minikube
-          ls -l $HOME/.minikube
-
-      - name: Apply Kubernetes manifests
-        run: |
-          export KUBECONFIG=$HOME/.kube/config
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
+          echo "${{ secrets.CLIENT_CRT }}" | base64 -d > $HOME/.minikube/profiles/minikube/client.crt
+          echo "${{ secrets.CLIENT_KEY }}" | base64 -d > $HOME/.minikube/profiles/minikube/client.key
+          echo "${{ secrets.CA_CRT }}" | base64 -d > $HOME/.minikube/ca.crt
 
       - name: Debug paths
         run: |
@@ -63,3 +53,16 @@ jobs:
           ls -l $HOME/.minikube
           echo "Listing .minikube/profiles/minikube:"
           ls -l $HOME/.minikube/profiles/minikube
+          echo "Contents of client.crt:"
+          cat $HOME/.minikube/profiles/minikube/client.crt
+          echo "Contents of client.key:"
+          cat $HOME/.minikube/profiles/minikube/client.key
+          echo "Contents of ca.crt:"
+          cat $HOME/.minikube/ca.crt
+
+      - name: Apply Kubernetes manifests
+        run: |
+          export KUBECONFIG=$HOME/.kube/config
+          kubectl config view
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
