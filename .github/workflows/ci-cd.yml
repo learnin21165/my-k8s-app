@@ -44,6 +44,6 @@ jobs:
       - name: Apply Kubernetes manifests
         run: |
           export KUBECONFIG=$HOME/.kube/config
-          # Полный путь для файлов
-          kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/deployment.yaml
-          kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/service.yaml
+          # Попробуем использовать относительные пути
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
