@@ -48,8 +48,13 @@ jobs:
           echo "Listing all files recursively:"
           ls -R
 
+      - name: Change directory to project root
+        run: |
+          cd /home/runner/work/my-k8s-app/my-k8s-app  # Переход в корневую директорию проекта
+          ls -l k8s  # Для проверки наличия файлов
+
       - name: Apply Kubernetes manifests
         run: |
           export KUBECONFIG=$HOME/.kube/config
-          kubectl apply -f ./k8s/deployment.yaml  # Указание правильного пути
-          kubectl apply -f ./k8s/service.yaml    # Указание правильного пути
+          kubectl apply -f k8s/deployment.yaml  # Указание правильного пути
+          kubectl apply -f k8s/service.yaml    # Указание правильного пути
