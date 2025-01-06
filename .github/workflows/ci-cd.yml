@@ -41,6 +41,13 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
+      - name: Set up Minikube certificates
+        run: |
+          mkdir -p $HOME/.minikube/profiles/minikube
+          echo "${{ secrets.CLIENT_CRT }}" > $HOME/.minikube/profiles/minikube/client.crt
+          echo "${{ secrets.CLIENT_KEY }}" > $HOME/.minikube/profiles/minikube/client.key
+          echo "${{ secrets.CA_CRT }}" > $HOME/.minikube/ca.crt
+
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/deployment.yaml
