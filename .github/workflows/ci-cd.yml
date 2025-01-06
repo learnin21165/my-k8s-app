@@ -33,9 +33,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Docker image
-        run: docker push vlad21165/my-k8s-app:latest
-
       - name: Set up Kubeconfig
         run: |
           mkdir -p $HOME/.kube
@@ -48,7 +45,21 @@ jobs:
           echo "${{ secrets.CLIENT_KEY }}" > $HOME/.minikube/profiles/minikube/client.key
           echo "${{ secrets.CA_CRT }}" > $HOME/.minikube/ca.crt
 
+          # Проверка файлов
+          ls -l $HOME/.minikube/profiles/minikube
+          ls -l $HOME/.minikube
+
       - name: Apply Kubernetes manifests
         run: |
+          export KUBECONFIG=$HOME/.kube/config
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+
+      - name: Debug paths
+        run: |
+          echo "Listing .kube directory:"
+          ls -l $HOME/.kube
+          echo "Listing .minikube directory:"
+          ls -l $HOME/.minikube
+          echo "Listing .minikube/profiles/minikube:"
+          ls -l $HOME/.minikube/profiles/minikube
