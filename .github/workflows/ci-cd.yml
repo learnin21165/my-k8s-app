@@ -47,16 +47,18 @@ jobs:
           pwd
           echo "Listing all files recursively:"
           ls -R
-          
-      - name: Debug Kubernetes manifests path
+
+      - name: Debug directory and check files again
         run: |
-          echo "Checking if files exist at the expected path:"
-          ls -l /home/runner/work/my-k8s-app/my-k8s-app/k8s
-          
+          echo "Changing to the correct directory..."
+          cd /home/runner/work/my-k8s-app/my-k8s-app/k8s  # Явно переходим в папку k8s
+          pwd
+          ls -l  # Проверяем содержимое папки
+
       - name: Apply Kubernetes manifests
         run: |
           echo "Applying Kubernetes manifests..."
           export KUBECONFIG=$HOME/.kube/config
-          ls -l /home/runner/work/my-k8s-app/my-k8s-app/k8s  # Проверка, существуют ли файлы перед применением
+          ls -l /home/runner/work/my-k8s-app/my-k8s-app/k8s  # Проверяем, существуют ли файлы перед применением
           kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/deployment.yaml  # Используем полный путь
           kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/service.yaml    # Используем полный путь
