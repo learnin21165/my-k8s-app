@@ -3,51 +3,42 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master   # Запускать pipeline на изменения в ветке master
+      - master
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Платформа для выполнения CI/CD
+    runs-on: ubuntu-latest
 
     steps:
-      # Шаг для загрузки кода из репозитория
       - name: Checkout code
-        uses: actions/checkout@v2  
+        uses: actions/checkout@v2
 
-      # Шаг для установки Docker Buildx
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2  
+        uses: docker/setup-buildx-action@v2
 
-      # Шаг для кэширования Docker слоев
       - name: Cache Docker layers
-        uses: actions/cache@v2  
+        uses: actions/cache@v2
         with:
           path: ~/.cache/docker
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
 
-      # Шаг для сборки Docker образа
       - name: Build Docker image
-        run: docker build -t vlad21165/my-k8s-app:latest -f Dockerfile .  # Явно указываем путь к Dockerfile
+        run: docker build -t vlad21165/my-k8s-app:latest -f Dockerfile .
 
-      # Шаг для логина в Docker Hub
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2  
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}  # Токен для Docker Hub
-          password: ${{ secrets.DOCKER_PASSWORD }}  # Пароль или токен Docker Hub
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Шаг для публикации Docker образа на Docker Hub
       - name: Push Docker image
-        run: docker push vlad21165/my-k8s-app:latest  # Публикуем образ в Docker Hub
-
-      # Шаги для деплоя в Kubernetes (по необходимости)
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1  # Используем старую версию azure/setup-kubectl
+        run: docker push vlad21165/my-k8s-app:latest
 
       - name: Set up Kubeconfig
         run: |
+          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
       - name: Apply Kubernetes manifests
