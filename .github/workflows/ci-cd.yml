@@ -13,12 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Show current directory and list files
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Listing contents:"
-          ls -R  # Смотрим содержимое всех подкаталогов
-
       - name: Build Docker image
         run: docker build -t vlad21165/my-k8s-app:latest -f Dockerfile .
 
@@ -47,9 +41,15 @@ jobs:
           ls -l $HOME/.minikube/profiles/minikube
           ls -l $HOME/.minikube
 
+      - name: List current directory and files in k8s directory
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing all files recursively:"
+          ls -R
+
       - name: Apply Kubernetes manifests
         run: |
           export KUBECONFIG=$HOME/.kube/config
-          # Абсолютный путь к файлам для уверенности
-          kubectl apply -f ./k8s/deployment.yaml
-          kubectl apply -f ./k8s/service.yaml
+          kubectl apply -f ./k8s/deployment.yaml  # Указание правильного пути
+          kubectl apply -f ./k8s/service.yaml    # Указание правильного пути
