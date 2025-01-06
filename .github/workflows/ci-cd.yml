@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: List files after checkout (verify repo files)
+        run: |
+          echo "Listing files after checkout..."
+          ls -R  # Печатаем все файлы в репозитории после checkout
+
       - name: Build Docker image
         run: docker build -t vlad21165/my-k8s-app:latest -f Dockerfile .
 
@@ -41,24 +46,15 @@ jobs:
           ls -l $HOME/.minikube/profiles/minikube
           ls -l $HOME/.minikube
 
-      - name: List current directory and files in k8s directory
+      - name: Debug and List k8s directory content
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing all files recursively:"
-          ls -R
-
-      - name: Debug directory and check files again
-        run: |
-          echo "Changing to the correct directory..."
-          cd /home/runner/work/my-k8s-app/my-k8s-app/k8s  # Явно переходим в папку k8s
-          pwd
-          ls -l  # Проверяем содержимое папки
+          echo "Checking content of the k8s directory..."
+          ls -l ./k8s  # Проверяем содержимое папки k8s относительно текущей директории
 
       - name: Apply Kubernetes manifests
         run: |
           echo "Applying Kubernetes manifests..."
           export KUBECONFIG=$HOME/.kube/config
-          ls -l /home/runner/work/my-k8s-app/my-k8s-app/k8s  # Проверяем, существуют ли файлы перед применением
-          kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/deployment.yaml  # Используем полный путь
-          kubectl apply -f /home/runner/work/my-k8s-app/my-k8s-app/k8s/service.yaml    # Используем полный путь
+          ls -l ./k8s  # Повторно проверяем содержимое папки перед применением
+          kubectl apply -f ./k8s/deployment.yaml  # Применяем манифесты
+          kubectl apply -f ./k8s/service.yaml
