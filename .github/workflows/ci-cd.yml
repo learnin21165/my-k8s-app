@@ -18,8 +18,13 @@ jobs:
           echo "Listing files after checkout..."
           ls -R  # Печатаем все файлы в репозитории после checkout
 
+      - name: Verify Dockerfile presence
+        run: |
+          echo "Verifying Dockerfile..."
+          ls -l Dockerfile
+
       - name: Build Docker image
-        run: docker build -t vlad21165/my-k8s-app:latest -f Dockerfile .
+        run: docker build -t vlad21165/my-k8s-app:latest .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
